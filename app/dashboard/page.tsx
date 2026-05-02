@@ -1,6 +1,8 @@
 
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
     const totalProducts = await prisma.product.count();
     const activeProducts = await prisma.product.count({
