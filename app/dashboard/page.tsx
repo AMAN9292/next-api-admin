@@ -12,6 +12,7 @@ export default async function DashboardPage() {
 
     return (
         <div>
+            console.log("TOTAL =", totalProducts);
             <h1 className="text-3xl font-bold mb-8">
                 Dashboard
             </h1>
