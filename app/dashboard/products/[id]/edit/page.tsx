@@ -9,6 +9,7 @@ export default function EditProductPage() {
     const router = useRouter();
 
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const [form, setForm] = useState({
         title: "",
@@ -46,6 +47,7 @@ export default function EditProductPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
 
         try {
             setLoading(true);
@@ -58,8 +60,8 @@ export default function EditProductPage() {
 
             alert("Updated Successfully");
             router.push("/dashboard/products");
-        } catch {
-            alert("Update Failed");
+        } catch (error: any) {
+            setError(error.response?.data?.error || "Update Failed");
         } finally {
             setLoading(false);
         }
@@ -68,6 +70,12 @@ export default function EditProductPage() {
     return (
         <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow">
             <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
+
+            {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm">
+                    {error}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input

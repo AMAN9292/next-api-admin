@@ -15,6 +15,7 @@ export default function NewProductPage() {
     });
 
     const [Loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({
@@ -25,6 +26,7 @@ export default function NewProductPage() {
     };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError("");
 
         try {
             setLoading(true);
@@ -46,7 +48,7 @@ export default function NewProductPage() {
                 thumbnail: "",
             });
         } catch (error: any) {
-            alert(error.response?.data?.error || "Error adding product");
+            setError(error.response?.data?.error || "Error adding product");
         } finally {
             setLoading(false);
         }
@@ -55,6 +57,12 @@ export default function NewProductPage() {
     return (
         <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-xl shadow">
             <h1 className="text-2xl font-bold mb-6">Add Product</h1>
+
+            {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm">
+                    {error}
+                </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <input

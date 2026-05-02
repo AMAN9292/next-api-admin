@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { productSchema } from "@/lib/validation";
 import slugify from "slugify";
+import { z } from "zod";
 
 export async function GET() {
     const products = await prisma.product.findMany({
@@ -17,12 +18,18 @@ export async function POST(req: Request) {
     try {
         const body = await req.json();
 
-        const validated = productSchema.parse(body);
+        const validation = productSchema.safeParse(body);
+        if (!validation.success) {
+            return NextResponse.json(
+                { error: validation.error.issues[0]?.message || "Validation failed" },
+                { status: 400 }
+            );
+        }
 
         const product = await prisma.product.create({
             data: {
-                ...validated,
-                slug: slugify(validated.title, { lower: true }),
+                ...validation.data,
+                slug: slugify(validation.data.title, { lower: true }),
             },
         });
 
@@ -30,8 +37,8 @@ export async function POST(req: Request) {
     } catch (error: any) {
         console.error("CREATE PRODUCT ERROR:", error);
         return NextResponse.json(
-            { error: error.errors ? error.errors[0].message : "Something went wrong" },
-            { status: 400 }
+            { error: error.message || "Something went wrong" },
+            { status: 500 }
         );
     }
 }
